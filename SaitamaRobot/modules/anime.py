@@ -515,6 +515,25 @@ def site_search(update: Update, context: CallbackContext, site: str):
             post_name = html.escape(entry.text.strip())
             result += f"• <a href='{post_link}'>{post_name}</a>\n"
 
+    elif site == "neo":
+        search_url = f"https://neonime.site/episode/"
+        html_text = requests.get(search_url).text
+        soup = bs4.BeautifulSoup(html_text, "html.parser")
+        search_result = soup.find_all("td", {"class": "bb"})
+
+        result = f"<b>Search results for</b> <code>New updates</code> <b>on</b> Neonime: \n"
+        for entry in search_result:
+
+            if entry.text.strip() == "Nothing Found":
+                result = f"<b>No result found for</b> <code>New Updates</code> <b>on</b> Neonime"
+                more_results = False
+                break
+
+            post_link = entry.a["href"]
+            post_name = html.escape(entry.text.strip())
+            result += f"• <a href='{post_link}'>{post_name}</a>\n"
+
+
     buttons = [[InlineKeyboardButton("See all results", url=search_url)]]
 
     if more_results:
